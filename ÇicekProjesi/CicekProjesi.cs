@@ -15,77 +15,51 @@ namespace ÇicekProjesi
         public double toplam;
     }
 
-    internal class CicekProjesi
+    internal class Program
     {
         static Random random = new Random();
 
         static void Main(string[] args)
         {
-            Console.WriteLine();
-            while (true)
-            {
-                tekSetDeneyYap(random);
-                Console.WriteLine("Devam etmek icin bir tusa basin");
-                Console.ReadLine();
-                Console.Clear();
-            }
-        }
-
-        static void tekSetDeneyYap(Random random)
-        {
-            double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
-            int[] deneyMiktarlari = { 50, 20, 100 };
             Cicek[] CicekListesi = cicekListesiniOlustur();
             Noron[] noronlar = noronlariOlustur();
             agirliklariOlustur(noronlar, random);
-            Console.Write("Deney Sayisi: ");
-            int deneySayisi = Int32.Parse(Console.ReadLine());
-            Console.Clear();
-            for (int i = 0; i < deneySayisi; i++)
+            double[,] dogrulukDegerleri = new double[3, 3];
+            double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
+            int[] deneyMiktarlari = { 10, 20, 50 };
+            for (int i = 0; i < 3; i++)
             {
-                double[,] dogrulukDegerleri = new double[3, 3];
-                for (int j = 0; j < 3; j++)
+                for (int m = 0; m < 3; m++)
                 {
-                    for (int k = 0; k < 3; k++)
+                    for (int j = 0; j < deneyMiktarlari[i]; j++)
                     {
-                        for (int l = 0; l < deneyMiktarlari[k]; l++)
+                        for (int k = 0; k < 150; k++)
                         {
-                            for (int m = 0; m < 150; m++)
-                            {
-                                hesaplamaYap(noronlar, CicekListesi, m, lamdaDegerleri[j]);
-                                noronKontrol(noronlar, CicekListesi, m, lamdaDegerleri[j]);
-                            }
+                            hesaplamaYap(noronlar, CicekListesi, k, lamdaDegerleri[m]);
+                            noronKontrol(noronlar, CicekListesi, k, lamdaDegerleri[m]);
                         }
-
-                        for (int l = 0; l < 150; l++)
-                        {
-                            hesaplamaYap(noronlar, CicekListesi, l, lamdaDegerleri[j]);
-                            dogrulukDegerleri[k, j] += dogrulukKontrol(noronlar, CicekListesi, l);
-                        }
-
-                        dogrulukDegerleri[k, j] = (dogrulukDegerleri[k, j] / 150) * 100;
-                        agirliklariOlustur(noronlar, random);
                     }
+
+                    for (int j = 0; j < 150; j++)
+                    {
+                        hesaplamaYap(noronlar, CicekListesi, j, lamdaDegerleri[m]);
+                        dogrulukDegerleri[i, m] += dogrulukKontrol(noronlar, CicekListesi, j, lamdaDegerleri[m]);
+                    }
+
+                    dogrulukDegerleri[i, m] = (dogrulukDegerleri[i, m] / 150) * 100;
+                    agirliklariOlustur(noronlar, random);
                 }
-
-                sonuclariYaz(deneyMiktarlari, lamdaDegerleri, dogrulukDegerleri, i);
             }
-        }
 
-        static void sonuclariYaz(int[] deneyMiktarlari, double[] lamdaDegerleri, double[,] dogrulukDegerleri, int deney)
-        {
-            int[] sira = { 1, 0, 2 };
-
-            Console.Write("{0}.Deney Dogruluk Degerleri:\n\n", deney + 1);
-            Console.Write(string.Format("{0,28}λ {1,17}λ {2,17}λ\n\n", lamdaDegerleri[1], lamdaDegerleri[0],
+            Console.Write("Dogruluk Degerleri:\n");
+            Console.Write(string.Format("{0,25}{1,19}{2,19}\n", lamdaDegerleri[0], lamdaDegerleri[1],
                 lamdaDegerleri[2]));
             for (int i = 0; i < 3; i++)
             {
-                string epok = $"{deneyMiktarlari[sira[i]]} Epok";
-                Console.Write(string.Format("{0,-10}", epok));
+                Console.Write("" + deneyMiktarlari[i] + "epok");
                 for (int j = 0; j < 3; j++)
                 {
-                    Console.Write(string.Format("{0,18:0.##}%", dogrulukDegerleri[sira[i], sira[j]]));
+                    Console.Write(string.Format("{0,19:0.##}", dogrulukDegerleri[i, j]));
                 }
 
                 Console.Write("\n\n");
@@ -137,8 +111,7 @@ namespace ÇicekProjesi
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    CicekListesi[i].ozellikleri[j] =
-                        (double.Parse(dataDizisi[i][j], CultureInfo.InvariantCulture)) / 10;
+                    CicekListesi[i].ozellikleri[j] = double.Parse(dataDizisi[i][j], CultureInfo.InvariantCulture);
                 }
 
                 CicekListesi[i].ad = dataDizisi[i][4];
@@ -175,7 +148,6 @@ namespace ÇicekProjesi
 
         static void noronKontrol(Noron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
         {
-            int[] degisimNoronları = new int[2];
             double enBuyukDeger = noronlar[0].toplam;
             int enBuyukNoron = 0;
             for (int i = 0; i < 3; i++)
@@ -187,14 +159,12 @@ namespace ÇicekProjesi
                 }
             }
 
-            degisimNoronları[0] = enBuyukNoron;
             switch (cicekListesi[index].ad)
             {
                 case "Iris-setosa":
                     if (enBuyukNoron != 0)
                     {
-                        degisimNoronları[1] = 0;
-                        agırlıkDegistir(cicekListesi, noronlar, degisimNoronları, index, lamda);
+                        agırlıkDegistir(noronlar, enBuyukNoron, index, lamda);
                     }
 
                     break;
@@ -202,8 +172,7 @@ namespace ÇicekProjesi
                 case "Iris-versicolor":
                     if (enBuyukNoron != 1)
                     {
-                        degisimNoronları[1] = 1;
-                        agırlıkDegistir(cicekListesi, noronlar, degisimNoronları, index, lamda);
+                        agırlıkDegistir(noronlar, enBuyukNoron, index, lamda);
                     }
 
                     break;
@@ -211,27 +180,35 @@ namespace ÇicekProjesi
                 case "Iris-virginica":
                     if (enBuyukNoron != 2)
                     {
-                        degisimNoronları[1] = 2;
-                        agırlıkDegistir(cicekListesi, noronlar, degisimNoronları, index, lamda);
+                        agırlıkDegistir(noronlar, enBuyukNoron, index, lamda);
                     }
 
                     break;
             }
         }
 
-        static void agırlıkDegistir(Cicek[] cicekListesi, Noron[] noronlar, int[] degisenNoronlar, int index,
-            double lamda)
+        static void agırlıkDegistir(Noron[] noronlar, int enBuyukDeger, int index, double lamda)
         {
-            double x;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
-                x = cicekListesi[index].ozellikleri[i];
-                noronlar[degisenNoronlar[0]].agırlıklar[index, i] -= (lamda * x);
-                noronlar[degisenNoronlar[1]].agırlıklar[index, i] += (lamda * x);
+                if (i == enBuyukDeger)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        noronlar[i].agırlıklar[index, j] -= lamda;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        noronlar[i].agırlıklar[index, j] += lamda;
+                    }
+                }
             }
         }
 
-        static int dogrulukKontrol(Noron[] noronlar, Cicek[] cicekListesi, int index)
+        static int dogrulukKontrol(Noron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
         {
             double enBuyukDeger = 0;
             int enBuyukNoron = 0;
@@ -271,13 +248,6 @@ namespace ÇicekProjesi
             }
 
             return 0;
-        }
-
-        static void siralamaYap(double[] lamdaListesi, int[] deneyListesi)
-        {
-            for (int i = 0; i < lamdaListesi.Length; i++)
-            {
-            }
         }
     }
 }
