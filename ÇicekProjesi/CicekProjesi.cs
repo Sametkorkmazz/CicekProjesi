@@ -31,7 +31,6 @@ namespace ÇicekProjesi
 
         static void tekSetDeneyYap(Random random)
         {
-
             double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
             int[] deneyMiktarlari = { 50, 20, 100 };
             Cicek[] CicekListesi = cicekListesiniOlustur();
