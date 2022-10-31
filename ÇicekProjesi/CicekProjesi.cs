@@ -9,7 +9,7 @@ namespace ÇicekProjesi
         public string ad;
     }
 
-    class za
+    class haha
     {
     }
 
