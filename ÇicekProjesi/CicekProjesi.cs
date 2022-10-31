@@ -9,6 +9,10 @@ namespace ÇicekProjesi
         public string ad;
     }
 
+    class za
+    {
+    }
+
     class Noron
     {
         public double[,] agırlıklar = new double[150, 4];
