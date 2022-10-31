@@ -21,6 +21,7 @@ namespace ÇicekProjesi
 
         static void Main(string[] args)
         {
+            Console.WriteLine();
             while (true)
             {
                 tekSetDeneyYap(random);
@@ -41,6 +42,7 @@ namespace ÇicekProjesi
             Console.Clear();
             for (int i = 0; i < deneySayisi; i++)
             {
+
                 double[,] dogrulukDegerleri = new double[3, 3];
                 for (int j = 0; j < 3; j++)
                 {
