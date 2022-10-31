@@ -21,6 +21,8 @@ namespace ÇicekProjesi
 
         static void Main(string[] args)
         {
+            Console.WriteLine();
+            Console.WriteLine();
             Cicek[] CicekListesi = cicekListesiniOlustur();
             Noron[] noronlar = noronlariOlustur();
             agirliklariOlustur(noronlar, random);
