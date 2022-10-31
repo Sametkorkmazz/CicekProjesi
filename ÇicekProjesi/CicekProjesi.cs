@@ -22,6 +22,7 @@ namespace ÇicekProjesi
         static void Main(string[] args)
         {
             Console.WriteLine();
+            Console.WriteLine();
             while (true)
             {
                 tekSetDeneyYap(random);
