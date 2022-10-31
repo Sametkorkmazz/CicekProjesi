@@ -25,6 +25,7 @@ namespace ÇicekProjesi
             while (true)
             {
                 tekSetDeneyYap(random);
+                Console.WriteLine("Devam etmek icin bir tusa basin");
                 Console.ReadLine();
                 Console.Clear();
             }
