@@ -9,9 +9,7 @@ namespace ÇicekProjesi
         public string ad;
     }
 
-    class haha
-    {
-    }
+
 
     class Noron
     {
