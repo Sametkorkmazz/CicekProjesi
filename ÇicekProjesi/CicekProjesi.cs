@@ -8,7 +8,7 @@ namespace ÇicekProjesi
         public static void Main(string[] args)
         {
             string[] dosyaOkuma =
-                System.IO.File.ReadAllLines(@"C:\Users\pc\Desktop\iris.data");
+                System.IO.File.ReadAllLines(@"C:\Users\debim\Desktop\iris.data");
 
             string[][] ozelliklerDizisi = new string[150][];
             for (int i = 0; i < 150; i++)
