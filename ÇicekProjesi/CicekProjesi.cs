@@ -28,7 +28,9 @@ namespace ÇicekProjesi
             Neuron[] neronlar = neronlariOlustur();
             Console.Write("Deney Sayisi: ");
             Console.Clear();
-            for (int i = 0; i < 3; i++)
+            Console.Write("Deney Miktarini Girin: ");
+            int deneyMiktari = Int32.Parse(Console.ReadLine());
+            for (int i = 0; i < deneyMiktari; i++)
             {
                 double[,] dogrulukDegerleri = new double[3, 3];
                 for (int j = 0; j < 3; j++)
@@ -266,7 +268,12 @@ namespace ÇicekProjesi
     {
         static void Main(string[] args)
         {
-            NeuralNetwork.programiEgit();
+            while (true)
+            {
+                NeuralNetwork.programiEgit();
+                Console.ReadLine();
+                Console.Clear();
+            }
         }
     }
 }
