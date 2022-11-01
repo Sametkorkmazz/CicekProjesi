@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 namespace ÇicekProjesi
@@ -18,15 +18,21 @@ namespace ÇicekProjesi
     class NeuralNetwork
     {
         static Random random = new Random();
+        static Neuron[] neronlar = new Neuron[3];
 
+        public NeuralNetwork()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                neronlar[i] = new Neuron();
+            }
+        }
 
-        public static void programiEgit()
+        public void programiEgit()
         {
             double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
-            int[] deneyMiktarlari = { 50, 20, 100 };
+            int[] deneyMiktarlari = { 20, 50, 100 };
             Cicek[] CicekListesi = cicekListesiniOlustur();
-            Neuron[] neronlar = neronlariOlustur();
-            Console.Write("Deney Sayisi: ");
             Console.Clear();
             for (int i = 0; i < 3; i++)
             {
@@ -59,16 +65,6 @@ namespace ÇicekProjesi
             }
         }
 
-        static Neuron[] neronlariOlustur()
-        {
-            Neuron[] neronlar = new Neuron[3];
-            for (int i = 0; i < 3; i++)
-            {
-                neronlar[i] = new Neuron();
-            }
-
-            return neronlar;
-        }
 
         static void agirliklariOlustur(Neuron[] noronlar, Random random)
         {
@@ -266,7 +262,8 @@ namespace ÇicekProjesi
     {
         static void Main(string[] args)
         {
-            NeuralNetwork.programiEgit();
+            NeuralNetwork network = new NeuralNetwork();
+            network.programiEgit();
         }
     }
 }
