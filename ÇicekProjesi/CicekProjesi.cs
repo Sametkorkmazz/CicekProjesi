@@ -264,7 +264,6 @@ namespace ÇicekProjesi
         {
             NeuralNetwork network = new NeuralNetwork();
             network.programiEgit();
-            Console.WriteLine();
         }
     }
 }
