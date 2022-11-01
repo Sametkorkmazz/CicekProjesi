@@ -31,7 +31,7 @@ namespace ÇicekProjesi
         public void programiEgit()
         {
             double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
-            int[] deneyMiktarlari = { 20, 50, 100 };
+            int[] deneyMiktarlari = { 50, 20, 100 };
             Cicek[] CicekListesi = cicekListesiniOlustur();
             Console.Clear();
             for (int i = 0; i < 3; i++)
