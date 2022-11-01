@@ -9,10 +9,19 @@ namespace ÇicekProjesi
         public string ad;
     }
 
-    class Noron
+    class Neuron
     {
         public double[,] agırlıklar = new double[150, 4];
         public double toplam;
+    }
+
+    class NeuralNetwork
+    {
+        public NeuralNetwork()
+        {
+            Neuron[] neronlar = new Neuron[3];
+        }
+
     }
 
     internal class CicekProjesi
@@ -35,7 +44,7 @@ namespace ÇicekProjesi
             double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
             int[] deneyMiktarlari = { 50, 20, 100 };
             Cicek[] CicekListesi = cicekListesiniOlustur();
-            Noron[] noronlar = noronlariOlustur();
+            Neuron[] noronlar = noronlariOlustur();
             agirliklariOlustur(noronlar, random);
             Console.Write("Deney Sayisi: ");
             int deneySayisi = Int32.Parse(Console.ReadLine());
@@ -91,7 +100,7 @@ namespace ÇicekProjesi
             }
         }
 
-        static void agirliklariOlustur(Noron[] noronlar, Random random)
+        static void agirliklariOlustur(Neuron[] noronlar, Random random)
         {
             double sayi;
             for (int i = 0; i < 3; i++)
@@ -146,18 +155,18 @@ namespace ÇicekProjesi
             return CicekListesi;
         }
 
-        static Noron[] noronlariOlustur()
+        static Neuron[] noronlariOlustur()
         {
-            Noron[] noronlar = new Noron[3];
+            Neuron[] noronlar = new Neuron[3];
             for (int i = 0; i < 3; i++)
             {
-                noronlar[i] = new Noron();
+                noronlar[i] = new Neuron();
             }
 
             return noronlar;
         }
 
-        static void hesaplamaYap(Noron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
+        static void hesaplamaYap(Neuron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
         {
             double toplam;
             for (int i = 0; i < 3; i++)
@@ -172,7 +181,7 @@ namespace ÇicekProjesi
             }
         }
 
-        static void noronKontrol(Noron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
+        static void noronKontrol(Neuron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
         {
             int[] degisimNoronları = new int[2];
             double enBuyukDeger = noronlar[0].toplam;
@@ -218,7 +227,7 @@ namespace ÇicekProjesi
             }
         }
 
-        static void agırlıkDegistir(Cicek[] cicekListesi, Noron[] noronlar, int[] degisenNoronlar, int index,
+        static void agırlıkDegistir(Cicek[] cicekListesi, Neuron[] noronlar, int[] degisenNoronlar, int index,
             double lamda)
         {
             double x;
@@ -230,7 +239,7 @@ namespace ÇicekProjesi
             }
         }
 
-        static int dogrulukKontrol(Noron[] noronlar, Cicek[] cicekListesi, int index)
+        static int dogrulukKontrol(Neuron[] noronlar, Cicek[] cicekListesi, int index)
         {
             double enBuyukDeger = 0;
             int enBuyukNoron = 0;
