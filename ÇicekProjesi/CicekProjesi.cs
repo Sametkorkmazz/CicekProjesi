@@ -17,35 +17,15 @@ namespace ÇicekProjesi
 
     class NeuralNetwork
     {
-        public NeuralNetwork()
-        {
-            Neuron[] neronlar = new Neuron[3];
-        }
-
-    }
-
-    internal class CicekProjesi
-    {
         static Random random = new Random();
 
-        static void Main(string[] args)
-        {
-            while (true)
-            {
-                tekSetDeneyYap(random);
-                Console.WriteLine("Devam etmek icin bir tusa basin");
-                Console.ReadLine();
-                Console.Clear();
-            }
-        }
 
-        static void tekSetDeneyYap(Random random)
+        public static void programiEgit()
         {
             double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
             int[] deneyMiktarlari = { 50, 20, 100 };
             Cicek[] CicekListesi = cicekListesiniOlustur();
-            Neuron[] noronlar = noronlariOlustur();
-            agirliklariOlustur(noronlar, random);
+            Neuron[] neronlar = neronlariOlustur();
             Console.Write("Deney Sayisi: ");
             int deneySayisi = Int32.Parse(Console.ReadLine());
             Console.Clear();
@@ -56,23 +36,23 @@ namespace ÇicekProjesi
                 {
                     for (int k = 0; k < 3; k++)
                     {
+                        agirliklariOlustur(neronlar, random);
                         for (int l = 0; l < deneyMiktarlari[k]; l++)
                         {
                             for (int m = 0; m < 150; m++)
                             {
-                                hesaplamaYap(noronlar, CicekListesi, m, lamdaDegerleri[j]);
-                                noronKontrol(noronlar, CicekListesi, m, lamdaDegerleri[j]);
+                                hesaplamaYap(neronlar, CicekListesi, m, lamdaDegerleri[j]);
+                                noronKontrol(neronlar, CicekListesi, m, lamdaDegerleri[j]);
                             }
                         }
 
                         for (int l = 0; l < 150; l++)
                         {
-                            hesaplamaYap(noronlar, CicekListesi, l, lamdaDegerleri[j]);
-                            dogrulukDegerleri[k, j] += dogrulukKontrol(noronlar, CicekListesi, l);
+                            hesaplamaYap(neronlar, CicekListesi, l, lamdaDegerleri[j]);
+                            dogrulukDegerleri[k, j] += dogrulukKontrol(neronlar, CicekListesi, l);
                         }
 
                         dogrulukDegerleri[k, j] = (dogrulukDegerleri[k, j] / 150) * 100;
-                        agirliklariOlustur(noronlar, random);
                     }
                 }
 
@@ -80,24 +60,15 @@ namespace ÇicekProjesi
             }
         }
 
-        static void sonuclariYaz(int[] deneyMiktarlari, double[] lamdaDegerleri, double[,] dogrulukDegerleri, int deney)
+        static Neuron[] neronlariOlustur()
         {
-            int[] sira = { 1, 0, 2 };
-
-            Console.Write("{0}.Deney Dogruluk Degerleri:\n\n", deney + 1);
-            Console.Write(string.Format("{0,28}λ {1,17}λ {2,17}λ\n\n", lamdaDegerleri[1], lamdaDegerleri[0],
-                lamdaDegerleri[2]));
+            Neuron[] neronlar = new Neuron[3];
             for (int i = 0; i < 3; i++)
             {
-                string epok = $"{deneyMiktarlari[sira[i]]} Epok";
-                Console.Write(string.Format("{0,-10}", epok));
-                for (int j = 0; j < 3; j++)
-                {
-                    Console.Write(string.Format("{0,18:0.##}%", dogrulukDegerleri[sira[i], sira[j]]));
-                }
-
-                Console.Write("\n\n");
+                neronlar[i] = new Neuron();
             }
+
+            return neronlar;
         }
 
         static void agirliklariOlustur(Neuron[] noronlar, Random random)
@@ -153,17 +124,6 @@ namespace ÇicekProjesi
             }
 
             return CicekListesi;
-        }
-
-        static Neuron[] noronlariOlustur()
-        {
-            Neuron[] noronlar = new Neuron[3];
-            for (int i = 0; i < 3; i++)
-            {
-                noronlar[i] = new Neuron();
-            }
-
-            return noronlar;
         }
 
         static void hesaplamaYap(Neuron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
@@ -229,6 +189,7 @@ namespace ÇicekProjesi
 
         static void agırlıkDegistir(Cicek[] cicekListesi, Neuron[] noronlar, int[] degisenNoronlar, int index,
             double lamda)
+
         {
             double x;
             for (int i = 0; i < 4; i++)
@@ -281,11 +242,32 @@ namespace ÇicekProjesi
             return 0;
         }
 
-        static void siralamaYap(double[] lamdaListesi, int[] deneyListesi)
+        static void sonuclariYaz(int[] deneyMiktarlari, double[] lamdaDegerleri, double[,] dogrulukDegerleri, int deney)
         {
-            for (int i = 0; i < lamdaListesi.Length; i++)
+            int[] sira = { 1, 0, 2 };
+
+            Console.Write("{0}.Deney Dogruluk Degerleri:\n\n", deney + 1);
+            Console.Write(string.Format("{0,28}λ {1,17}λ {2,17}λ\n\n", lamdaDegerleri[1], lamdaDegerleri[0],
+                lamdaDegerleri[2]));
+            for (int i = 0; i < 3; i++)
             {
+                string epok = $"{deneyMiktarlari[sira[i]]} Epok";
+                Console.Write(string.Format("{0,-10}", epok));
+                for (int j = 0; j < 3; j++)
+                {
+                    Console.Write(string.Format("{0,18:0.##}%", dogrulukDegerleri[sira[i], sira[j]]));
+                }
+
+                Console.Write("\n\n");
             }
+        }
+    }
+
+    internal class CicekProjesi
+    {
+        static void Main(string[] args)
+        {
+            NeuralNetwork.programiEgit();
         }
     }
 }
