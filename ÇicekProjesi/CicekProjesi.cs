@@ -1,255 +1,203 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
 
 namespace ÇicekProjesi
 {
-    class Cicek
+    public class Program
     {
-        public double[] ozellikleri = new double[4];
-        public string ad;
-    }
-
-
-
-    class Noron
-    {
-        public double[,] agırlıklar = new double[150, 4];
-        public double toplam;
-    }
-
-    internal class Program
-    {
-        static Random random = new Random();
-
-        static void Main(string[] args)
-        {
-            Cicek[] CicekListesi = cicekListesiniOlustur();
-            Noron[] noronlar = noronlariOlustur();
-            agirliklariOlustur(noronlar, random);
-            double[,] dogrulukDegerleri = new double[3, 3];
-            double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
-            int[] deneyMiktarlari = { 10, 20, 50 };
-            for (int i = 0; i < 3; i++)
-            {
-                for (int m = 0; m < 3; m++)
-                {
-                    for (int j = 0; j < deneyMiktarlari[i]; j++)
-                    {
-                        for (int k = 0; k < 150; k++)
-                        {
-                            hesaplamaYap(noronlar, CicekListesi, k, lamdaDegerleri[m]);
-                            noronKontrol(noronlar, CicekListesi, k, lamdaDegerleri[m]);
-                        }
-                    }
-
-                    for (int j = 0; j < 150; j++)
-                    {
-                        hesaplamaYap(noronlar, CicekListesi, j, lamdaDegerleri[m]);
-                        dogrulukDegerleri[i, m] += dogrulukKontrol(noronlar, CicekListesi, j, lamdaDegerleri[m]);
-                    }
-
-                    dogrulukDegerleri[i, m] = (dogrulukDegerleri[i, m] / 150) * 100;
-                    agirliklariOlustur(noronlar, random);
-                }
-            }
-
-            Console.Write("Dogruluk Degerleri:\n");
-            Console.Write(string.Format("{0,25}{1,19}{2,19}\n", lamdaDegerleri[0], lamdaDegerleri[1],
-                lamdaDegerleri[2]));
-            for (int i = 0; i < 3; i++)
-            {
-                Console.Write("" + deneyMiktarlari[i] + "epok");
-                for (int j = 0; j < 3; j++)
-                {
-                    Console.Write(string.Format("{0,19:0.##}", dogrulukDegerleri[i, j]));
-                }
-
-                Console.Write("\n\n");
-            }
-        }
-
-        static void agirliklariOlustur(Noron[] noronlar, Random random)
-        {
-            double sayi;
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 150; j++)
-                {
-                    for (int k = 0; k < 4; k++)
-                    {
-                        while (true)
-                        {
-                            sayi = random.NextDouble();
-                            if (sayi != 0)
-                            {
-                                break;
-                            }
-                        }
-
-                        noronlar[i].agırlıklar[j, k] = Math.Round(sayi, 1);
-                    }
-                }
-            }
-        }
-
-        static Cicek[] cicekListesiniOlustur()
+        public static void Main(string[] args)
         {
             string[] dosyaOkuma =
-                System.IO.File.ReadAllLines(@"C:\Users\debim\source\repos\ÇicekProjesi\ÇicekProjesi\iris.data");
-            string[][] dataDizisi = new string[150][];
+                System.IO.File.ReadAllLines(@"C:\Users\pc\Desktop\iris.data");
+
+            string[][] ozelliklerDizisi = new string[150][];
             for (int i = 0; i < 150; i++)
             {
-                dataDizisi[i] = new string[5];
-                dataDizisi[i] = dosyaOkuma[i].Split(',');
+                ozelliklerDizisi[i] = new string[5];
+                ozelliklerDizisi[i] = dosyaOkuma[i].Split(',');
             }
 
-            Cicek[] CicekListesi = new Cicek[150];
-            for (int i = 0; i < 150; i++)
+            NeuralNetwork network = new NeuralNetwork();
+            Neuron N1 = new Neuron();
+            Neuron N2 = new Neuron();
+            Neuron N3 = new Neuron();
+            network.NeuronArray.Add(N1);
+            network.NeuronArray.Add(N2);
+            network.NeuronArray.Add(N3);
+
+            int[] epokdegerleri = { 20, 50, 100 };
+            double[] ogrenmekatsayilari = { 0.005, 0.01, 0.025 };
+
+            for (int z = 1; z < 4; z++)
             {
-                CicekListesi[i] = new Cicek();
+                Console.Write($"Deney Tablosu - {z} -------------------------------------------------------:\n", z);
+                Console.Write(string.Format("{0,24} lambda{1,12} lambda{2,12} lambda\n\n", ogrenmekatsayilari[0],
+                    ogrenmekatsayilari[1],
+                    ogrenmekatsayilari[2]));
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.Write($"{epokdegerleri[i],5}" + " epok");
+                    for (int j = 0; j < 3; j++)
+                    {
+                        network.egitimiYap(network, ozelliklerDizisi, epokdegerleri[i], ogrenmekatsayilari[j]);
+
+                        Console.Write(string.Format("{0,19:0.##}", network.dogrulukYuzdesi(epokdegerleri[i])));
+                        network.dogruSayisi = 0;
+                    }
+
+                    Console.Write("\n\n");
+                }
+            }
+        }
+    }
+
+    public class Neuron
+    {
+        static Random random = new Random();
+        public double[] girdiSayilari = new double[4];
+        public string girdiCicekAdi;
+        public double[] agirliklar = new double[4];
+
+        public Neuron()
+        {
+            for (int i = 0; i < agirliklar.Length; i++)
+            {
+                double xx = random.NextDouble();
+                this.agirliklar[i] = xx;
+            }
+        }
+
+        public void agirliklariYenile()
+        {
+            for (int i = 0; i < agirliklar.Length; i++)
+            {
+                double xx = random.NextDouble();
+                this.agirliklar[i] = xx;
+            }
+        }
+
+        public double Ciktisi()
+        {
+            double cikti = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                cikti = agirliklar[i] * girdiSayilari[i];
             }
 
-            for (int i = 0; i < 150; i++)
+            return cikti;
+        }
+    }
+
+    public class NeuralNetwork
+    {
+        public List<Neuron> NeuronArray = new List<Neuron>();
+        public int dogruSayisi = 0;
+
+        public void agirliklariEgit(double ogrenmekatsayisi)
+        {
+            int maxNeuron = maxNoronuBul();
+            int beklenenNoron = beklenenNoronuBul();
+
+            if (maxNeuron != beklenenNoron)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    CicekListesi[i].ozellikleri[j] = double.Parse(dataDizisi[i][j], CultureInfo.InvariantCulture);
+                    NeuronArray[beklenenNoron].agirliklar[j] +=
+                        (ogrenmekatsayisi * NeuronArray[beklenenNoron].girdiSayilari[j]);
+                    NeuronArray[maxNeuron].agirliklar[j] -=
+                        (ogrenmekatsayisi * NeuronArray[maxNeuron].girdiSayilari[j]);
                 }
-
-                CicekListesi[i].ad = dataDizisi[i][4];
             }
-
-            return CicekListesi;
         }
 
-        static Noron[] noronlariOlustur()
+        public void dogruSayisiniArttir()
         {
-            Noron[] noronlar = new Noron[3];
-            for (int i = 0; i < 3; i++)
-            {
-                noronlar[i] = new Noron();
-            }
+            int maxNeuron = maxNoronuBul();
+            int beklenenNoron = beklenenNoronuBul();
 
-            return noronlar;
+            if (maxNeuron == beklenenNoron)
+            {
+                this.dogruSayisi += 1;
+            }
         }
 
-        static void hesaplamaYap(Noron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
+        public double dogrulukYuzdesi(int epok)
         {
-            double toplam;
+            double mmm = (double)this.dogruSayisi / (150 * epok) * 100;
+            return mmm;
+        }
+
+        public int maxNoronuBul()
+        {
+            double maxCikti = 0;
+            int maxNeuron = 0;
             for (int i = 0; i < 3; i++)
             {
-                toplam = 0;
-                for (int j = 0; j < 4; j++)
+                if (NeuronArray[i].Ciktisi() > maxCikti)
                 {
-                    toplam += cicekListesi[index].ozellikleri[j] * noronlar[i].agırlıklar[index, j];
-                }
-
-                noronlar[i].toplam = toplam;
-            }
-        }
-
-        static void noronKontrol(Noron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
-        {
-            double enBuyukDeger = noronlar[0].toplam;
-            int enBuyukNoron = 0;
-            for (int i = 0; i < 3; i++)
-            {
-                if (enBuyukDeger < noronlar[i].toplam)
-                {
-                    enBuyukDeger = noronlar[i].toplam;
-                    enBuyukNoron = i;
+                    maxCikti = NeuronArray[i].Ciktisi();
+                    maxNeuron = i;
                 }
             }
 
-            switch (cicekListesi[index].ad)
-            {
-                case "Iris-setosa":
-                    if (enBuyukNoron != 0)
-                    {
-                        agırlıkDegistir(noronlar, enBuyukNoron, index, lamda);
-                    }
-
-                    break;
-
-                case "Iris-versicolor":
-                    if (enBuyukNoron != 1)
-                    {
-                        agırlıkDegistir(noronlar, enBuyukNoron, index, lamda);
-                    }
-
-                    break;
-
-                case "Iris-virginica":
-                    if (enBuyukNoron != 2)
-                    {
-                        agırlıkDegistir(noronlar, enBuyukNoron, index, lamda);
-                    }
-
-                    break;
-            }
+            return maxNeuron;
         }
 
-        static void agırlıkDegistir(Noron[] noronlar, int enBuyukDeger, int index, double lamda)
+        public int beklenenNoronuBul()
         {
-            for (int i = 0; i < 3; i++)
+            int beklenenNoron = 0;
+
+            if (NeuronArray[0].girdiCicekAdi.Equals("Iris-setosa"))
             {
-                if (i == enBuyukDeger)
+                beklenenNoron = 0;
+            }
+
+            if (NeuronArray[1].girdiCicekAdi.Equals("Iris-versicolor"))
+            {
+                beklenenNoron = 1;
+            }
+
+            if (NeuronArray[2].girdiCicekAdi.Equals("Iris-virginica"))
+            {
+                beklenenNoron = 2;
+            }
+
+            return beklenenNoron;
+        }
+
+        public void egitimiYap(NeuralNetwork network, String[][] ozelliklerDizisi, int epok, double ogrenmekatsayisi)
+        {
+            void verileriYerlestir(int k)
+            {
+                for (int i = 0; i < 3; i++)
                 {
                     for (int j = 0; j < 4; j++)
                     {
-                        noronlar[i].agırlıklar[index, j] -= lamda;
+                        double girdiVerisi = Convert.ToDouble(ozelliklerDizisi[k][j],
+                            System.Globalization.CultureInfo.InvariantCulture);
+                        girdiVerisi /= 10;
+                        network.NeuronArray[i].girdiSayilari[j] = girdiVerisi;
                     }
-                }
-                else
-                {
-                    for (int j = 0; j < 4; j++)
-                    {
-                        noronlar[i].agırlıklar[index, j] += lamda;
-                    }
+
+                    network.NeuronArray[i].girdiCicekAdi = ozelliklerDizisi[k][4];
                 }
             }
-        }
 
-        static int dogrulukKontrol(Noron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
-        {
-            double enBuyukDeger = 0;
-            int enBuyukNoron = 0;
+            for (int e = 0; e < epok; e++)
+            {
+                for (int k = 0; k < 150; k++)
+                {
+                    verileriYerlestir(k);
+                    network.agirliklariEgit(ogrenmekatsayisi);
+                    network.dogruSayisiniArttir();
+                }
+            }
+
             for (int i = 0; i < 3; i++)
             {
-                if (enBuyukDeger < noronlar[i].toplam)
-                {
-                    enBuyukDeger = noronlar[i].toplam;
-                    enBuyukNoron = i;
-                }
+                network.NeuronArray[i].agirliklariYenile();
             }
-
-            switch (cicekListesi[index].ad)
-            {
-                case "Iris-setosa":
-                    if (enBuyukNoron == 0)
-                    {
-                        return 1;
-                    }
-
-                    return 0;
-                case "Iris-versicolor":
-                    if (enBuyukNoron == 1)
-                    {
-                        return 1;
-                    }
-
-                    return 0;
-
-                case "Iris-virginica":
-                    if (enBuyukNoron == 2)
-                    {
-                        return 1;
-                    }
-
-                    return 0;
-            }
-
-            return 0;
         }
     }
 }
