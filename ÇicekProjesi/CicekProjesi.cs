@@ -262,6 +262,7 @@ namespace ÇicekProjesi
     {
         static void Main(string[] args)
         {
+            Console.WriteLine();
             NeuralNetwork network = new NeuralNetwork();
             network.programiEgit();
         }
