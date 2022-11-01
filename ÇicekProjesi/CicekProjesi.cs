@@ -273,7 +273,6 @@ namespace ÇicekProjesi
                 NeuralNetwork.programiEgit();
                 Console.ReadLine();
                 Console.Clear();
-                Console.WriteLine();
             }
         }
     }
