@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 namespace ÇicekProjesi
@@ -273,7 +273,6 @@ namespace ÇicekProjesi
                 NeuralNetwork.programiEgit();
                 Console.ReadLine();
                 Console.Clear();
-                Console.WriteLine();
             }
         }
     }
