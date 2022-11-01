@@ -27,9 +27,8 @@ namespace ÇicekProjesi
             Cicek[] CicekListesi = cicekListesiniOlustur();
             Neuron[] neronlar = neronlariOlustur();
             Console.Write("Deney Sayisi: ");
-            int deneySayisi = Int32.Parse(Console.ReadLine());
             Console.Clear();
-            for (int i = 0; i < deneySayisi; i++)
+            for (int i = 0; i < 3; i++)
             {
                 double[,] dogrulukDegerleri = new double[3, 3];
                 for (int j = 0; j < 3; j++)
