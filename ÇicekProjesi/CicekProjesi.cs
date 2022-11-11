@@ -29,7 +29,7 @@ namespace ÇicekProjesi
             }
         }
 
-        public void programiEgit() // Ana method
+        public void programiEgit() // Ana metot
         {
             double[] LambdaDegerleri = { 0.01, 0.005, 0.025 };
             int[] EpokMiktarlari = { 50, 20, 100 };
@@ -43,24 +43,34 @@ namespace ÇicekProjesi
                     dogrulukDegerleri =
                         new double[3,
                             3]; // Doğruluk yüzdelerinin tutulacağı 2 boyutlu dizi, satırlar epok değerleri sütünlar lambda değerleri için
-                for (int Lambdaİndexi = 0; Lambdaİndexi < 3; Lambdaİndexi++) // LambdaDegerleri dizisini gezen index. 
+                for (int Lambdaİndexi = 0; Lambdaİndexi < 3; Lambdaİndexi++) // LambdaDegerleri dizisini gezen index
                 {
                     for (int Epokİndexi = 0; Epokİndexi < 3; Epokİndexi++) // EpokMiktarlari dizisini gezen index
                     {
-                        agirliklariOlustur(random); // Her
-                        for (int l = 0; l < EpokMiktarlari[Epokİndexi]; l++)
+                        agirliklariOlustur(
+                            random); // Yeni epek miktarina başlamadan önce ağırlıkları tekrardan random oluşturma
+                        for (int EpokMiktari = 0; EpokMiktari < EpokMiktarlari[Epokİndexi]; EpokMiktari++)
                         {
-                            for (int m = 0; m < 150; m++)
+                            for (int ÇiçekListesiİndexi = 0;
+                                 ÇiçekListesiİndexi < 150;
+                                 ÇiçekListesiİndexi++) // ÇiçekListesi dizisini gecen index
                             {
-                                hesaplamaYap(CicekListesi, m, LambdaDegerleri[Lambdaİndexi]);
-                                noronKontrol(CicekListesi, m, LambdaDegerleri[Lambdaİndexi]);
+                                NöronToplamDegeriHesapla(CicekListesi, ÇiçekListesiİndexi,
+                                    LambdaDegerleri[Lambdaİndexi]); // Her Nöronun toplam degerini hesaplama
+                                EnBuyükNöronuBul(CicekListesi, ÇiçekListesiİndexi,
+                                    LambdaDegerleri[
+                                        Lambdaİndexi]); // Değeri en büyük çıkan Nöronu bulup, bakılan Çiçekle karşılaştırma
                             }
                         }
 
-                        for (int l = 0; l < 150; l++)
+                        for (int ÇiçekListesiİndexi = 0;
+                             ÇiçekListesiİndexi < 150;
+                             ÇiçekListesiİndexi++) // Epoklar tamamlandıktan sonra, ağırlıklar değiştirilmeden doğruluk değerini bulma
                         {
-                            hesaplamaYap(CicekListesi, l, LambdaDegerleri[Lambdaİndexi]);
-                            dogrulukDegerleri[Epokİndexi, Lambdaİndexi] += dogrulukKontrol(CicekListesi, l);
+                            NöronToplamDegeriHesapla(CicekListesi, ÇiçekListesiİndexi, LambdaDegerleri[Lambdaİndexi]);
+                            dogrulukDegerleri[Epokİndexi, Lambdaİndexi] +=
+                                dogrulukKontrol(CicekListesi,
+                                    ÇiçekListesiİndexi); // Bakılan çiçek doğruysa 1 değilse 0 döndüren metot
                         }
 
                         dogrulukDegerleri[Epokİndexi, Lambdaİndexi] =
@@ -68,81 +78,101 @@ namespace ÇicekProjesi
                     }
                 }
 
-                sonuclariYaz(EpokMiktarlari, LambdaDegerleri, dogrulukDegerleri, tabloDeneyi);
+                sonuclariYaz(EpokMiktarlari, LambdaDegerleri, dogrulukDegerleri,
+                    tabloDeneyi); // Konsola sonuçları yazan metot
             }
         }
 
 
-        static void agirliklariOlustur(Random random)
+        static void
+            agirliklariOlustur(
+                Random random) // Her nöron için 4, toplam 12 (0,1) arasında ağırlık oluşturma (0 ve 1 hariç)
         {
             double sayi;
-            for (int i = 0; i < 3; i++)
+            for (int NöronlarListesiİndex = 0; NöronlarListesiİndex < 3; NöronlarListesiİndex++)
             {
-                for (int k = 0; k < 4; k++)
+                for (int Ağırlıkİndexi = 0; Ağırlıkİndexi < 4; Ağırlıkİndexi++)
                 {
-                    while (true)
+                    while (true) // random double metotunun 0 oluşturmaması için döngü
                     {
                         sayi = random.NextDouble();
-                        if (sayi != 0)
+                        if (sayi != 0) // ağırlık 0 değilse döngüyü kır
                         {
                             break;
                         }
                     }
 
-                    nöronlar[i].agırlıklar[k] = Math.Round(sayi, 1);
+                    nöronlar[NöronlarListesiİndex].agırlıklar[Ağırlıkİndexi] =
+                        Math.Round(sayi, 1); // Ağırlıklarınğın virgül sonrasını 1 basamağa yuvarlama
                 }
             }
         }
 
-        static Cicek[] cicekListesiniOlustur()
+        static Cicek[] cicekListesiniOlustur() // iris.data dosyasını okuyup ,Çiçek sınıfı elemanlı dizi oluşturma
         {
-            string[] dosyaOkuma =
-                File.ReadAllLines(@"C:\Users\debim\source\repos\ÇicekProjesi\ÇicekProjesi\iris.data");
+            string path = Path.Combine(Directory.GetCurrentDirectory()) +
+                          "\\iris.data"; /*Bu satirdaki path stringi iris.data dosyasının -
+            bilgisayardaki konumunu göstermek içindir. iris.data dosyasının bulunduğu yere göre değiştirilebilir.Değiştirilmedi sürece projenin bulunduğu klasördeki -
+            bin/debug klasöründen iris.data yı okumaya çalışacaktır. iris.data dosyasını bu klasöre atmak yeterlidir. */
+            string[]
+                dosyaOkuma =
+                    File.ReadAllLines(
+                        path); // Elemanları iris.data dosyasının satırlarından oluşan 150 elemanlı string dizisi
             string[][] dataDizisi = new string[150][];
-            for (int i = 0; i < 150; i++)
+            for (int i = 0;
+                 i < 150;
+                 i++) // Çiçeklerin özelliklerini ve isimlerini her virgülde ayırarak yeni diziye atama
             {
                 dataDizisi[i] = new string[5];
                 dataDizisi[i] = dosyaOkuma[i].Split(',');
             }
 
-            Cicek[] CicekListesi = new Cicek[150];
+            Cicek[] CicekListesi = new Cicek[150]; // Çicek nesnelerinden oluşan ÇiçekListesi
             for (int i = 0; i < 150; i++)
             {
-                CicekListesi[i] = new Cicek();
+                CicekListesi[i] = new Cicek(); // Bellekte yer atama
             }
 
-            for (int i = 0; i < 150; i++)
+            for (int ÇiçekListesiİndexi = 0;
+                 ÇiçekListesiİndexi < 150;
+                 ÇiçekListesiİndexi++) // Çiçek Listesine çiçek adları ve özelliklerini ekleme
             {
-                for (int j = 0; j < 4; j++)
+                for (int ÇiçekÖzellikİndexi = 0; ÇiçekÖzellikİndexi < 4; ÇiçekÖzellikİndexi++)
                 {
-                    CicekListesi[i].ozellikleri[j] =
-                        (double.Parse(dataDizisi[i][j], CultureInfo.InvariantCulture)) / 10;
+                    CicekListesi[ÇiçekListesiİndexi].ozellikleri[ÇiçekÖzellikİndexi] =
+                        (double.Parse(dataDizisi[ÇiçekListesiİndexi][ÇiçekÖzellikİndexi],
+                            CultureInfo.InvariantCulture)) /
+                        10; // String olarak okunan özellikleri double sayılara çevirme ve ona bölme
                 }
 
-                CicekListesi[i].ad = dataDizisi[i][4];
+                CicekListesi[ÇiçekListesiİndexi].ad = dataDizisi[ÇiçekListesiİndexi][4];
             }
 
             return CicekListesi;
         }
 
-        static void hesaplamaYap(Cicek[] cicekListesi, int index, double lamda)
+        static void
+            NöronToplamDegeriHesapla(Cicek[] cicekListesi, int index,
+                double lamda) // Nöron ağırlıkları çiçek girdileriyle çarpıp toplayan metot
         {
             double toplam;
-            for (int i = 0; i < 3; i++)
+            for (int Nöronİndexi = 0; Nöronİndexi < 3; Nöronİndexi++)
             {
                 toplam = 0;
-                for (int j = 0; j < 4; j++)
+                for (int Ağırlıkİndexi = 0; Ağırlıkİndexi < 4; Ağırlıkİndexi++)
                 {
-                    toplam += cicekListesi[index].ozellikleri[j] * nöronlar[i].agırlıklar[j];
+                    toplam += cicekListesi[index].ozellikleri[Ağırlıkİndexi] *
+                              nöronlar[Nöronİndexi].agırlıklar[Ağırlıkİndexi];
                 }
 
-                nöronlar[i].toplam = toplam;
+                nöronlar[Nöronİndexi].toplam = toplam;
             }
         }
 
-        static void noronKontrol(Cicek[] cicekListesi, int index, double lamda)
+        static void
+            EnBuyükNöronuBul(Cicek[] cicekListesi, int index,
+                double lamda) // Değeri en büyük çıkan Nöronu bulup ,bakılan Çiçeğin Nöronuyla karşılaştıran metot
         {
-            int[] degisimNoronları = new int[2];
             double enBuyukDeger = nöronlar[0].toplam;
             int enBuyukNoron = 0;
             for (int i = 0; i < 3; i++)
@@ -154,14 +184,15 @@ namespace ÇicekProjesi
                 }
             }
 
-            degisimNoronları[0] = enBuyukNoron;
-            switch (cicekListesi[index].ad)
+            int küçükNöron;
+            switch (cicekListesi[index].ad) // Bakılan çiçeğin adına göre aşağıdaki caselerden birine girer
             {
                 case "Iris-setosa":
-                    if (enBuyukNoron != 0)
+                    if (enBuyukNoron !=
+                        0) // Bakılan çiçeğin nöronuyla ,büyük çıkan nöron aynı olmazsa ağırlıkları değiştirir
                     {
-                        degisimNoronları[1] = 0;
-                        agırlıkDegistir(cicekListesi, degisimNoronları, index, lamda);
+                        küçükNöron = 0;
+                        agırlıkDegistir(cicekListesi, enBuyukNoron, küçükNöron, index, lamda);
                     }
 
                     break;
@@ -169,8 +200,8 @@ namespace ÇicekProjesi
                 case "Iris-versicolor":
                     if (enBuyukNoron != 1)
                     {
-                        degisimNoronları[1] = 1;
-                        agırlıkDegistir(cicekListesi, degisimNoronları, index, lamda);
+                        küçükNöron = 1;
+                        agırlıkDegistir(cicekListesi, enBuyukNoron, küçükNöron, index, lamda);
                     }
 
                     break;
@@ -178,28 +209,28 @@ namespace ÇicekProjesi
                 case "Iris-virginica":
                     if (enBuyukNoron != 2)
                     {
-                        degisimNoronları[1] = 2;
-                        agırlıkDegistir(cicekListesi, degisimNoronları, index, lamda);
+                        küçükNöron = 2;
+                        agırlıkDegistir(cicekListesi, enBuyukNoron, küçükNöron, index, lamda);
                     }
 
                     break;
             }
         }
 
-        static void agırlıkDegistir(Cicek[] cicekListesi, int[] degisenNoronlar, int index,
-            double lamda)
+        static void agırlıkDegistir(Cicek[] cicekListesi, int büyükNöron, int küçükNöron, int index, double lamda) // Büyük çıkması gereken Nöronun ağırlığını artırma ve diğerini küçültme
 
         {
             double çiçekGirdisi;
             for (int i = 0; i < 4; i++)
             {
-                çiçekGirdisi = cicekListesi[index].ozellikleri[i];
-                nöronlar[degisenNoronlar[0]].agırlıklar[i] -= (lamda * çiçekGirdisi);
-                nöronlar[degisenNoronlar[1]].agırlıklar[i] += (lamda * çiçekGirdisi);
+                çiçekGirdisi = cicekListesi[index].ozellikleri[i]; // Bakılan Çiçeğin özellikleri de hesaba katılır
+                nöronlar[büyükNöron].agırlıklar[i] -= (lamda * çiçekGirdisi);
+                nöronlar[küçükNöron].agırlıklar[i] += (lamda * çiçekGirdisi);
             }
         }
 
-        static int dogrulukKontrol(Cicek[] cicekListesi, int index)
+        static int dogrulukKontrol(Cicek[] cicekListesi, int index) /* Epok miktarı tamamlandıktan sonra doğruluk yüzdesini bulam metot.
+                                                                     Bu metotda Nöron ağırlıkları değiştirilmez.*/
         {
             double enBuyukDeger = 0;
             int enBuyukNoron = 0;
@@ -212,10 +243,10 @@ namespace ÇicekProjesi
                 }
             }
 
-            switch (cicekListesi[index].ad)
+            switch (cicekListesi[index].ad) // Çiçeğin ismine göre caselerden birine girme
             {
                 case "Iris-setosa":
-                    if (enBuyukNoron == 0)
+                    if (enBuyukNoron == 0) // En büyük çıkan Nöronla çiçeğin nöronunu karşılaştırır. Doğruysa 1 döndürür yanlış ise 0 döndürür.
                     {
                         return 1;
                     }
@@ -241,9 +272,12 @@ namespace ÇicekProjesi
             return 0;
         }
 
-        static void sonuclariYaz(int[] deneyMiktarlari, double[] lamdaDegerleri, double[,] dogrulukDegerleri, int deney)
+        static void sonuclariYaz(int[] deneyMiktarlari, double[] lamdaDegerleri, double[,] dogrulukDegerleri, int deney) // 3 Deney sonucunu birer tablo halinde konsola yazan metot.
         {
-            int[] sira = { 1, 0, 2 };
+            int[] sira = { 1, 0, 2 }; // Epok ve lambda değerlerinin yazılış sırası.
+
+            // string.Format metotları ile yazılar ve değerler alt alta daha okunaklı yazılır.
+            // {0,28} şeklinde, "0" ilk verilen parametre ve 28 değeri ise 28 boşluk bırakıp sağdan sola doğru yazılacağını söyler.
 
             Console.Write(string.Format("{0}.Deney Dogruluk Degerleri:\n\n", deney + 1));
             Console.Write(string.Format("{0,28}λ {1,17}λ {2,17}λ{3,25}\n\n", lamdaDegerleri[1], lamdaDegerleri[0],
@@ -269,8 +303,8 @@ namespace ÇicekProjesi
     {
         static void Main(string[] args)
         {
-            NeuralNetwork network = new NeuralNetwork();
-            network.programiEgit();
+            NeuralNetwork network = new NeuralNetwork(); // NeuralNetwork sınıfından network nesnesi oluşturma.
+            network.programiEgit(); // Makineyi eğitme.
         }
     }
 }
