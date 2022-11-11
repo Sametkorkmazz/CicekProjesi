@@ -217,7 +217,9 @@ namespace ÇicekProjesi
             }
         }
 
-        static void agırlıkDegistir(Cicek[] cicekListesi, int büyükNöron, int küçükNöron, int index, double lamda) // Büyük çıkması gereken Nöronun ağırlığını artırma ve diğerini küçültme
+        static void
+            agırlıkDegistir(Cicek[] cicekListesi, int büyükNöron, int küçükNöron, int index,
+                double lamda) // Büyük çıkması gereken Nöronun ağırlığını artırma ve diğerini küçültme
 
         {
             double çiçekGirdisi;
@@ -229,7 +231,9 @@ namespace ÇicekProjesi
             }
         }
 
-        static int dogrulukKontrol(Cicek[] cicekListesi, int index) /* Epok miktarı tamamlandıktan sonra doğruluk yüzdesini bulam metot.
+        static int
+            dogrulukKontrol(Cicek[] cicekListesi,
+                int index) /* Epok miktarı tamamlandıktan sonra doğruluk yüzdesini bulam metot.
                                                                      Bu metotda Nöron ağırlıkları değiştirilmez.*/
         {
             double enBuyukDeger = 0;
@@ -246,7 +250,8 @@ namespace ÇicekProjesi
             switch (cicekListesi[index].ad) // Çiçeğin ismine göre caselerden birine girme
             {
                 case "Iris-setosa":
-                    if (enBuyukNoron == 0) // En büyük çıkan Nöronla çiçeğin nöronunu karşılaştırır. Doğruysa 1 döndürür yanlış ise 0 döndürür.
+                    if (enBuyukNoron ==
+                        0) // En büyük çıkan Nöronla çiçeğin nöronunu karşılaştırır. Doğruysa 1 döndürür yanlış ise 0 döndürür.
                     {
                         return 1;
                     }
@@ -272,7 +277,8 @@ namespace ÇicekProjesi
             return 0;
         }
 
-        static void sonuclariYaz(int[] deneyMiktarlari, double[] lamdaDegerleri, double[,] dogrulukDegerleri, int deney) // 3 Deney sonucunu birer tablo halinde konsola yazan metot.
+        static void sonuclariYaz(int[] deneyMiktarlari, double[] lamdaDegerleri, double[,] dogrulukDegerleri,
+            int deney) // 3 Deney sonucunu birer tablo halinde konsola yazan metot.
         {
             int[] sira = { 1, 0, 2 }; // Epok ve lambda değerlerinin yazılış sırası.
 
