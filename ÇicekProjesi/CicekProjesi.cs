@@ -1,91 +1,95 @@
 using System;
 using System.Globalization;
+using System.IO;
 
 namespace ÇicekProjesi
 {
-    class Cicek
+    class Cicek // Her çiçeğin ait olacağı Çiçek sınıfı
     {
         public double[] ozellikleri = new double[4];
         public string ad;
     }
 
-    class Neuron
+    class Neuron // Nöron sınıfı
     {
-        public double[,] agırlıklar = new double[150, 4];
+        public double[] agırlıklar = new double[4];
         public double toplam;
     }
 
-    class NeuralNetwork
+    class NeuralNetwork // Yapay sinir ağı sınıfı
     {
-        static Random random = new Random();
-        static Neuron[] neronlar = new Neuron[3];
+        static readonly Random random = new Random();
+        static readonly Neuron[] nöronlar = new Neuron[3]; // Sırasıyla 1, 2 ve 3. Nöronu içeren liste
 
         public NeuralNetwork()
         {
             for (int i = 0; i < 3; i++)
             {
-                neronlar[i] = new Neuron();
+                nöronlar[i] = new Neuron(); // 3 Nöron için bellekte yer açılımı
             }
         }
 
-        public void programiEgit()
+        public void programiEgit() // Ana method
         {
-            double[] lamdaDegerleri = { 0.01, 0.005, 0.025 };
-            int[] deneyMiktarlari = { 50, 20, 100 };
-            Cicek[] CicekListesi = cicekListesiniOlustur();
+            double[] LambdaDegerleri = { 0.01, 0.005, 0.025 };
+            int[] EpokMiktarlari = { 50, 20, 100 };
+            Cicek[]
+                CicekListesi =
+                    cicekListesiniOlustur(); // Elemanları Çiçek sınıfından oluşan ,150 elemanlı ÇiçekListesi oluşturma
             Console.Clear();
-            for (int i = 0; i < 3; i++)
+            for (int tabloDeneyi = 0; tabloDeneyi < 3; tabloDeneyi++) // 3 tablo oluşturmak için en dış döngü
             {
-                double[,] dogrulukDegerleri = new double[3, 3];
-                for (int j = 0; j < 3; j++)
+                double[,]
+                    dogrulukDegerleri =
+                        new double[3,
+                            3]; // Doğruluk yüzdelerinin tutulacağı 2 boyutlu dizi, satırlar epok değerleri sütünlar lambda değerleri için
+                for (int Lambdaİndexi = 0; Lambdaİndexi < 3; Lambdaİndexi++) // LambdaDegerleri dizisini gezen index. 
                 {
-                    for (int k = 0; k < 3; k++)
+                    for (int Epokİndexi = 0; Epokİndexi < 3; Epokİndexi++) // EpokMiktarlari dizisini gezen index
                     {
-                        agirliklariOlustur(neronlar, random);
-                        for (int l = 0; l < deneyMiktarlari[k]; l++)
+                        agirliklariOlustur(random); // Her
+                        for (int l = 0; l < EpokMiktarlari[Epokİndexi]; l++)
                         {
                             for (int m = 0; m < 150; m++)
                             {
-                                hesaplamaYap(neronlar, CicekListesi, m, lamdaDegerleri[j]);
-                                noronKontrol(neronlar, CicekListesi, m, lamdaDegerleri[j]);
+                                hesaplamaYap(CicekListesi, m, LambdaDegerleri[Lambdaİndexi]);
+                                noronKontrol(CicekListesi, m, LambdaDegerleri[Lambdaİndexi]);
                             }
                         }
 
                         for (int l = 0; l < 150; l++)
                         {
-                            hesaplamaYap(neronlar, CicekListesi, l, lamdaDegerleri[j]);
-                            dogrulukDegerleri[k, j] += dogrulukKontrol(neronlar, CicekListesi, l);
+                            hesaplamaYap(CicekListesi, l, LambdaDegerleri[Lambdaİndexi]);
+                            dogrulukDegerleri[Epokİndexi, Lambdaİndexi] += dogrulukKontrol(CicekListesi, l);
                         }
 
-                        dogrulukDegerleri[k, j] = (dogrulukDegerleri[k, j] / 150) * 100;
+                        dogrulukDegerleri[Epokİndexi, Lambdaİndexi] =
+                            (dogrulukDegerleri[Epokİndexi, Lambdaİndexi] / 150) * 100;
                     }
                 }
 
-                sonuclariYaz(deneyMiktarlari, lamdaDegerleri, dogrulukDegerleri, i);
+                sonuclariYaz(EpokMiktarlari, LambdaDegerleri, dogrulukDegerleri, tabloDeneyi);
             }
         }
 
 
-        static void agirliklariOlustur(Neuron[] noronlar, Random random)
+        static void agirliklariOlustur(Random random)
         {
             double sayi;
             for (int i = 0; i < 3; i++)
             {
-                for (int j = 0; j < 150; j++)
+                for (int k = 0; k < 4; k++)
                 {
-                    for (int k = 0; k < 4; k++)
+                    while (true)
                     {
-                        while (true)
+                        sayi = random.NextDouble();
+                        if (sayi != 0)
                         {
-                            sayi = random.NextDouble();
-                            if (sayi != 0)
-                            {
-                                break;
-                            }
+                            break;
                         }
-
-                        noronlar[i].agırlıklar[j, k] = Math.Round(sayi, 1);
                     }
+
+                    nöronlar[i].agırlıklar[k] = Math.Round(sayi, 1);
                 }
             }
         }
@@ -93,7 +97,7 @@ namespace ÇicekProjesi
         static Cicek[] cicekListesiniOlustur()
         {
             string[] dosyaOkuma =
-                System.IO.File.ReadAllLines(@"C:\Users\debim\source\repos\ÇicekProjesi\ÇicekProjesi\iris.data");
+                File.ReadAllLines(@"C:\Users\debim\source\repos\ÇicekProjesi\ÇicekProjesi\iris.data");
             string[][] dataDizisi = new string[150][];
             for (int i = 0; i < 150; i++)
             {
@@ -121,7 +125,7 @@ namespace ÇicekProjesi
             return CicekListesi;
         }
 
-        static void hesaplamaYap(Neuron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
+        static void hesaplamaYap(Cicek[] cicekListesi, int index, double lamda)
         {
             double toplam;
             for (int i = 0; i < 3; i++)
@@ -129,23 +133,23 @@ namespace ÇicekProjesi
                 toplam = 0;
                 for (int j = 0; j < 4; j++)
                 {
-                    toplam += cicekListesi[index].ozellikleri[j] * noronlar[i].agırlıklar[index, j];
+                    toplam += cicekListesi[index].ozellikleri[j] * nöronlar[i].agırlıklar[j];
                 }
 
-                noronlar[i].toplam = toplam;
+                nöronlar[i].toplam = toplam;
             }
         }
 
-        static void noronKontrol(Neuron[] noronlar, Cicek[] cicekListesi, int index, double lamda)
+        static void noronKontrol(Cicek[] cicekListesi, int index, double lamda)
         {
             int[] degisimNoronları = new int[2];
-            double enBuyukDeger = noronlar[0].toplam;
+            double enBuyukDeger = nöronlar[0].toplam;
             int enBuyukNoron = 0;
             for (int i = 0; i < 3; i++)
             {
-                if (enBuyukDeger < noronlar[i].toplam)
+                if (enBuyukDeger < nöronlar[i].toplam)
                 {
-                    enBuyukDeger = noronlar[i].toplam;
+                    enBuyukDeger = nöronlar[i].toplam;
                     enBuyukNoron = i;
                 }
             }
@@ -157,7 +161,7 @@ namespace ÇicekProjesi
                     if (enBuyukNoron != 0)
                     {
                         degisimNoronları[1] = 0;
-                        agırlıkDegistir(cicekListesi, noronlar, degisimNoronları, index, lamda);
+                        agırlıkDegistir(cicekListesi, degisimNoronları, index, lamda);
                     }
 
                     break;
@@ -166,7 +170,7 @@ namespace ÇicekProjesi
                     if (enBuyukNoron != 1)
                     {
                         degisimNoronları[1] = 1;
-                        agırlıkDegistir(cicekListesi, noronlar, degisimNoronları, index, lamda);
+                        agırlıkDegistir(cicekListesi, degisimNoronları, index, lamda);
                     }
 
                     break;
@@ -175,35 +179,35 @@ namespace ÇicekProjesi
                     if (enBuyukNoron != 2)
                     {
                         degisimNoronları[1] = 2;
-                        agırlıkDegistir(cicekListesi, noronlar, degisimNoronları, index, lamda);
+                        agırlıkDegistir(cicekListesi, degisimNoronları, index, lamda);
                     }
 
                     break;
             }
         }
 
-        static void agırlıkDegistir(Cicek[] cicekListesi, Neuron[] noronlar, int[] degisenNoronlar, int index,
+        static void agırlıkDegistir(Cicek[] cicekListesi, int[] degisenNoronlar, int index,
             double lamda)
 
         {
-            double x;
+            double çiçekGirdisi;
             for (int i = 0; i < 4; i++)
             {
-                x = cicekListesi[index].ozellikleri[i];
-                noronlar[degisenNoronlar[0]].agırlıklar[index, i] -= (lamda * x);
-                noronlar[degisenNoronlar[1]].agırlıklar[index, i] += (lamda * x);
+                çiçekGirdisi = cicekListesi[index].ozellikleri[i];
+                nöronlar[degisenNoronlar[0]].agırlıklar[i] -= (lamda * çiçekGirdisi);
+                nöronlar[degisenNoronlar[1]].agırlıklar[i] += (lamda * çiçekGirdisi);
             }
         }
 
-        static int dogrulukKontrol(Neuron[] noronlar, Cicek[] cicekListesi, int index)
+        static int dogrulukKontrol(Cicek[] cicekListesi, int index)
         {
             double enBuyukDeger = 0;
             int enBuyukNoron = 0;
             for (int i = 0; i < 3; i++)
             {
-                if (enBuyukDeger < noronlar[i].toplam)
+                if (enBuyukDeger < nöronlar[i].toplam)
                 {
-                    enBuyukDeger = noronlar[i].toplam;
+                    enBuyukDeger = nöronlar[i].toplam;
                     enBuyukNoron = i;
                 }
             }
@@ -241,18 +245,21 @@ namespace ÇicekProjesi
         {
             int[] sira = { 1, 0, 2 };
 
-            Console.Write("{0}.Deney Dogruluk Degerleri:\n\n", deney + 1);
-            Console.Write(string.Format("{0,28}λ {1,17}λ {2,17}λ\n\n", lamdaDegerleri[1], lamdaDegerleri[0],
-                lamdaDegerleri[2]));
+            Console.Write(string.Format("{0}.Deney Dogruluk Degerleri:\n\n", deney + 1));
+            Console.Write(string.Format("{0,28}λ {1,17}λ {2,17}λ{3,25}\n\n", lamdaDegerleri[1], lamdaDegerleri[0],
+                lamdaDegerleri[2], "Ortalama Doğruluk"));
             for (int i = 0; i < 3; i++)
             {
+                double ortalamaDogruluk = 0;
                 string epok = $"{deneyMiktarlari[sira[i]]} Epok";
                 Console.Write(string.Format("{0,-10}", epok));
                 for (int j = 0; j < 3; j++)
                 {
                     Console.Write(string.Format("{0,18:0.##}%", dogrulukDegerleri[sira[i], sira[j]]));
+                    ortalamaDogruluk += dogrulukDegerleri[sira[i], sira[j]];
                 }
 
+                Console.Write(string.Format("{0,24:0.##}%", ortalamaDogruluk / 3));
                 Console.Write("\n\n");
             }
         }
