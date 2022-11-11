@@ -33,16 +33,15 @@ namespace ÇicekProjesi
         {
             double[] LambdaDegerleri = { 0.01, 0.005, 0.025 };
             int[] EpokMiktarlari = { 50, 20, 100 };
-            Cicek[]
-                CicekListesi =
-                    cicekListesiniOlustur(); // Elemanları Çiçek sınıfından oluşan ,150 elemanlı ÇiçekListesi oluşturma
+            // Elemanları Çiçek sınıfından oluşan ,150 elemanlı ÇiçekListesi oluşturma
+
+            Cicek[] CicekListesi = cicekListesiniOlustur();
             Console.Clear();
             for (int tabloDeneyi = 0; tabloDeneyi < 3; tabloDeneyi++) // 3 tablo oluşturmak için en dış döngü
             {
-                double[,]
-                    dogrulukDegerleri =
-                        new double[3,
-                            3]; // Doğruluk yüzdelerinin tutulacağı 2 boyutlu dizi, satırlar epok değerleri sütünlar lambda değerleri için
+                // Doğruluk yüzdelerinin tutulacağı 2 boyutlu dizi, satırlar epok değerleri sütünlar lambda değerleri için
+                double[,] dogrulukDegerleri = new double[3, 3];
+
                 for (int Lambdaİndexi = 0; Lambdaİndexi < 3; Lambdaİndexi++) // LambdaDegerleri dizisini gezen index
                 {
                     for (int Epokİndexi = 0; Epokİndexi < 3; Epokİndexi++) // EpokMiktarlari dizisini gezen index
