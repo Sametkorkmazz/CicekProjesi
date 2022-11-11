@@ -33,16 +33,11 @@ namespace ÇicekProjesi
         {
             double[] LambdaDegerleri = { 0.01, 0.005, 0.025 };
             int[] EpokMiktarlari = { 50, 20, 100 };
-            Cicek[]
-                CicekListesi =
-                    cicekListesiniOlustur();
+            Cicek[] CicekListesi = cicekListesiniOlustur();
             Console.Clear();
             for (int tabloDeneyi = 0; tabloDeneyi < 3; tabloDeneyi++)
             {
-                double[,]
-                    dogrulukDegerleri =
-                        new double[3,
-                            3];
+                double[,] dogrulukDegerleri = new double[3, 3];
                 for (int Lambdaİndexi = 0; Lambdaİndexi < 3; Lambdaİndexi++)
                 {
                     for (int Epokİndexi = 0; Epokİndexi < 3; Epokİndexi++)
