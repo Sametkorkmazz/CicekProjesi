@@ -29,7 +29,7 @@ namespace ÇicekProjesi
             }
         }
 
-        public void programiEgit() // Ana metot
+        public void programiEgit() // Eğitim ve Ana metot
         {
             double[] LambdaDegerleri = { 0.01, 0.005, 0.025 };
             int[] EpokMiktarlari = { 50, 20, 100 };
