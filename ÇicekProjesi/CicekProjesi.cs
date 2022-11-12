@@ -212,8 +212,7 @@ namespace ÇicekProjesi
             switch (cicekListesi[index].ad)
             {
                 case "Iris-setosa":
-                    if (enBuyukNoron ==
-                        0)
+                    if (enBuyukNoron == 0)
                     {
                         return 1;
                     }
